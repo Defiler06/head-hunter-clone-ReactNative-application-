@@ -1,0 +1,38 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:node/recommended",
+    "prettier"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/explicit-member-accessibility": "warn",
+    "@typescript-eslint/no-misused-promises": 0,
+    "@typescript-eslint/no-floating-promises": 0,
+    "max-len": [
+      "warn",
+      {
+        "code": 80
+      }
+    ],
+    "comma-dangle": ["warn", "always-multiline"],
+    "no-console": 2,
+    "semi": 2,
+    "indent": ["warn", "tab"],
+    "quotes": ["error", "single"],
+    "eqeqeq": "error",
+    "keyword-spacing": ["error"],
+    "prettier/pretier": 2
+  },
+  "settings": {
+    "node": {
+      "tryExtensions": [".js", ".json", ".node", ".ts"]
+    }
+  }
+}

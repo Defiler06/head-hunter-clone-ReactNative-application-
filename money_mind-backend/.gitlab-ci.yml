@@ -1,0 +1,52 @@
+stages:
+  - publish
+  - deploy
+
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  DOCKER_HOST: tcp://docker:2376
+
+docker-publish:
+  stage: publish
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  only: ["dev", "main"]
+
+  tags:
+    - back
+
+  before_script:
+    - docker info
+    - echo 'Publish job is running'
+ 
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - mkdir -p env
+    - cp -f $ENV_FILE .env
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST .
+    - docker push $TAG_COMMIT
+    - docker push $TAG_LATEST
+    - docker rmi $TAG_COMMIT
+    - docker rmi $TAG_LATEST
+
+deploy:
+ stage: deploy
+ image: alpine:latest
+ services:
+   - docker:20.10.16-dind
+ tags:
+   - back
+ script:
+   - chmod og= $RSA_KEY 
+   - apk update && apk add openssh-client
+   - ssh -i $RSA_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "mkdir -p ~/deploy"
+   - scp -i $RSA_KEY docker-compose.yml $SERVER_USER@$SERVER_IP:~/deploy 
+   - echo "IMAGE_APP_TAG=$TAG_COMMIT" >> .env
+   - cat .env
+   - scp -i $RSA_KEY .env $SERVER_USER@$SERVER_IP:~/deploy
+   - ssh -i $RSA_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY" 
+   - ssh -i $RSA_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker compose -f ~/deploy/docker-compose.yml down"
+   - ssh -i $RSA_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker compose -f ~/deploy/docker-compose.yml up -d" 
+ only: ["dev", "main"]

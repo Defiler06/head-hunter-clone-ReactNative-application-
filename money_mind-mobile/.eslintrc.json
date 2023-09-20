@@ -1,0 +1,75 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "react-native"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:node/recommended",
+    "plugin:react-native/all",
+    "prettier"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaFeatures": {
+      "tsx": true
+    }
+  },
+  "rules": {
+    "@typescript-eslint/restrict-template-expressions": 0,
+    "react-native/no-color-literals": 0,
+    "react-native/no-unused-styles": 2,
+    "react-native/no-raw-text": 1,
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        "version": ">=14.0.0",
+        "ignores": ["modules"]
+      }
+    ],
+    "@typescript-eslint/explicit-member-accessibility": "warn",
+    "@typescript-eslint/no-misused-promises": 0,
+    "@typescript-eslint/no-floating-promises": 0,
+    "max-len": [
+      "warn",
+      {
+        "code": 80
+      }
+    ],
+    "comma-dangle": [
+      "warn",
+      "always-multiline"
+    ],
+    "no-console": 2,
+    "semi": 2,
+    "indent": [
+      "warn",
+      "tab"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "eqeqeq": "error",
+    "keyword-spacing": [
+      "error"
+    ]
+  },
+  "settings": {
+    "node": {
+      "tryExtensions": [
+        ".js",
+        ".json",
+        ".node",
+        ".ts",
+        ".tsx",
+        ".jsx"
+      ]
+    }
+  }
+}
+
